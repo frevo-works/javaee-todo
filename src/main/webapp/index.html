@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 5rem;
+            }
+            .starter-template {
+                padding: 3rem 1.5rem;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand" href="#">TODO</a>
+        </nav>
+        <div class="container">
+
+            <div style="margin-bottom:5px;">
+                <button id="btnAdd" class="btn btn-outline-primary">追加</button>
+            </div>
+           
+            <table id="tblTodo" class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>タスク</th>
+                        <th>有効期限</th>
+                        <th>優先度</th>
+                        <th>ステータス</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="mdlTodo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">タスク登録</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="frmTodo" method="POST" action="">
+                            <input type="hidden" id="id" name="id" value="">
+                            <div class="form-group">
+                                <label for="inTask">タスク</label>
+                                <input type="text" class="form-control" id="task" name="task" required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="inExpireDate">有効期限</label>
+                                <input type="date" class="form-control" id="expireDate" name="expireDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="inPriority">優先度</label>
+                                <select class="form-control" name="priority" id="priority">
+                                    <option value=""></option>
+                                    <option value="1">低</option>
+                                    <option value="2">中</option>
+                                    <option value="3">高</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="inStatus">ステータス</label>
+                                <select class="form-control" name="status" id="status">
+                                    <option value=""></option>
+                                    <option value="1">Doing</option>
+                                    <option value="2">Done</option>
+                                    <option value="3">Pending</option>
+                                </select>
+                            </div>
+                            <button id="btnSave" type="submit" class="btn btn-outline-success">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-json/2.6.0/jquery.json.min.js"></script>
+        <script>
+            $(function () {
+
+                init();
+
+                $('#btnAdd').click(function () {
+                    $('#frmTodo')[0].reset();
+                    $('#mdlTodo').modal('show');
+                });
+                
+                $('#tblTodo').on('click', 'button.btnEdit', function () {
+                    let $row = $(this).closest('tr');
+                    let id = $row.data('id');
+                    
+                    $.ajax({
+                        url: `/webresources/todo/${id}`,
+                        type: 'GET',
+                        dataType: 'json'
+                    }).done(function (res) {
+                        $.each(res, function(i,v){
+                            $('#frmTodo').find("#"+i).val(v);
+                        });
+                        $('#mdlTodo').modal('show');
+                    }).fail(function () {
+                        showAlert('alert-danger', 'エラーが発生しました。');
+                    });
+                    
+                });
+
+                $('#tblTodo').on('click', 'button.btnRemove', function () {
+                    if (!confirm('削除してよろしいですか？')) {
+                        return;
+                    }
+
+                    let id = $(this).closest('tr').data('id');
+                    let $row = $(this).closest('tr');
+
+                    $.ajax({
+                        url: `/webresources/todo/${id}`,
+                        type: 'DELETE',
+                        dataType: 'json'
+                    }).done(function () {
+                        $row.remove();
+                        showAlert('alert-success', 'タスクが削除されました。');
+                    }).fail(function () {
+                        showAlert('alert-danger', 'エラーが発生しました。');
+                    });
+                });
+
+
+                $('#frmTodo').submit(function (e) {
+                    e.preventDefault();
+
+                    let $form = $(this);
+                    var param = {};
+                    $($form.serializeArray()).each(function (i, v) {
+                        param[v.name] = v.value;
+                    });
+                    
+                    let url;
+                    let method;
+                    
+                    if(param.id){
+                        url = `/webresources/todo/${param.id}`;
+                        method = 'PUT';
+                    }else{
+                        url = `/webresources/todo`;
+                        method = 'POST';
+                    }
+
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        data: JSON.stringify(param),
+                        dataType: 'json',
+                        contentType: 'application/json'
+                    }).done(function (res) {
+                        
+                        if(param.id){
+                            editRow(res);
+                        }else{
+                            addRow(res);
+                        }
+                        
+                        showAlert('alert-success', 'タスクが作成されました。');
+
+                        $('#mdlTodo').modal('hide');
+                    }).fail(function (res) {
+
+                    });
+                });
+            });
+
+            const init = () => {
+                $.ajax({
+                    url: '/webresources/todo',
+                    type: 'GET',
+                    dataType: 'json'
+                }).done(function (res) {
+                    for (let todo of res) {
+                        addRow(todo);
+                    }
+                }).fail(function (res) {
+                    showAlert('alert-danger', 'エラーが発生しました。');
+                });
+            };
+
+            const addRow = (data) => {
+                let highlight;
+                if(data.status === '1'){
+                    highlight = 'table-primary';
+                }else if(data.status === '2'){
+                    highlight = 'table-secondary';
+                }else if(data.status === '3'){
+                    highlight = 'table-warning';
+                }
+                
+                $('#tblTodo tbody').prepend(`
+                    <tr data-id="${data.id}" class="${highlight}">
+                        <td>${data.task}</td>
+                        <td>${data.expireDate}</td>
+                        <td>${getPropertyName('priority',data.priority)}</td>
+                        <td>${getPropertyName('status',data.status)}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btnEdit">編集</button>
+                            <button type="button" class="btn btn-outline-danger btnRemove">削除</button>
+                        </td>
+                    </tr>
+                `);
+            };
+            
+            const editRow = (data) => {
+                let highlight;
+                if(data.status === '1'){
+                    highlight = 'table-primary';
+                }else if(data.status === '2'){
+                    highlight = 'table-secondary';
+                }else if(data.status === '3'){
+                    highlight = 'table-warning';
+                }
+                
+                let $row = $(`#tblTodo tbody tr[data-id="${data.id}"]`);
+                $row.removeClass().addClass(highlight);
+                
+                $row.find('td:eq(0)').text(data.task);
+                $row.find('td:eq(1)').text(data.expireDate);
+                $row.find('td:eq(2)').text(getPropertyName('priority',data.priority));
+                $row.find('td:eq(3)').text(getPropertyName('status',data.status));
+            };
+
+            const showAlert = (alertType, message) => {
+                $('div.container').prepend(`
+                    <div class="alert ${alertType} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `);
+            };
+            
+            const getPropertyName = (name,val) => {
+                let propertyName = "-";
+                $(`#${name} option`).each(function(){
+                    if($(this).val() == val){
+                        propertyName = $(this).text();
+                        return;
+                    }
+                });
+                return propertyName;
+            };
+            
+          
+        </script>
+    </body>
+</html>
