@@ -45,8 +45,7 @@ import lombok.ToString;
     , @NamedQuery(name = "Todo.findByStatus", query = "SELECT t FROM Todo t WHERE t.status = :status")
     , @NamedQuery(name = "Todo.findByPriority", query = "SELECT t FROM Todo t WHERE t.priority = :priority")
     , @NamedQuery(name = "Todo.findByCreateDate", query = "SELECT t FROM Todo t WHERE t.createDate = :createDate")
-    , @NamedQuery(name = "Todo.findByUpdateDate", query = "SELECT t FROM Todo t WHERE t.updateDate = :updateDate")
-    , @NamedQuery(name = "Todo.findByDeleteDate", query = "SELECT t FROM Todo t WHERE t.deleteDate = :deleteDate")})
+    , @NamedQuery(name = "Todo.findByUpdateDate", query = "SELECT t FROM Todo t WHERE t.updateDate = :updateDate")})
 public class Todo implements Serializable {
 
     private static final long serialVersionUID = 1L;

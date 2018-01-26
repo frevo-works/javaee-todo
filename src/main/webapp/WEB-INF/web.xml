@@ -12,4 +12,12 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+    
+    <data-source>
+        <name>java:app/jdbc/tododb</name>
+        <class-name>org.postgresql.ds.PGSimpleDataSource</class-name>
+        <url>jdbc:postgresql://localhost:15432/tododb</url>
+        <user>postgres</user>
+        <password>postgres</password>
+    </data-source>
 </web-app>

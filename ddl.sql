@@ -15,7 +15,6 @@ create table todo (
   , status char(1) not null
   , priority char(1)
   , create_date timestamp
-  , update_date timestamp
-  , delete_date timestamp
+  , update_dapte timestamp
   , constraint todo_PKC primary key (id)
 ) ;
