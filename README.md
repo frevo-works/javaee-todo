@@ -29,6 +29,9 @@ docker-compose up -d
 java -jar todo.jar
 ```
 
+### 課題
+
+機能を正常に動作させること。
 
 
 
