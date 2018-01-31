@@ -1,4 +1,4 @@
-# javaeeの勉強用
+# JavaEE7の勉強用
 
 ## 準備
 
@@ -17,6 +17,8 @@
 [こちら](https://netbeans.org/downloads/start.html?platform=macosx&lang=ja&option=javaee)からインストーラをダウンロードし、インストールする。
 
 ## 環境構築
+
+※作業用のディレクトリに移動してから行ってください。
 
 ### ソースを取得
 
