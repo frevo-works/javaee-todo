@@ -27,7 +27,7 @@ import jp.co.frevoworks.javaee.todo.domain.service.TodoService;
  *
  * @author frevoworks
  */
-@Path("/todo")
+@Path("todo")
 @RequestScoped
 public class TodoResource {
 

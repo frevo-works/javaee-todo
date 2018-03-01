@@ -123,7 +123,7 @@
                     let $row = $(this).closest('tr');
 
                     $.ajax({
-                        url: `/webresources/todo/${id}`,
+                        url: `/javaee-todo/webresources/todo/${id}`,
                         type: 'DELETE',
                         dataType: 'json'
                     }).done(function () {
@@ -148,10 +148,10 @@
                     let method;
                     
                     if(param.id){
-                        url = `/webresources/todo/${param.id}`;
+                        url = `/javaee-todo/webresources/todo/${param.id}`;
                         method = 'PUT';
                     }else{
-                        url = `/webresources/todo`;
+                        url = `/javaee-todo/webresources/todo`;
                         method = 'POST';
                     }
 
@@ -160,7 +160,7 @@
                         type: method,
                         data: JSON.stringify(param),
                         dataType: 'json',
-                        contentType: 'application/json'
+                        contentType: 'application/json; charset=utf-8'
                     }).done(function (res) {
                         
                         if(param.id){
@@ -173,14 +173,14 @@
 
                         $('#mdlTodo').modal('hide');
                     }).fail(function (res) {
-                       alert(res);
+                        alert(res);
                     });
                 });
             });
 
             const init = () => {
                 $.ajax({
-                    url: '/webresources/todo',
+                    url: '/javaee-todo/webresources/todo',
                     type: 'GET',
                     dataType: 'json'
                 }).done(function (res) {
