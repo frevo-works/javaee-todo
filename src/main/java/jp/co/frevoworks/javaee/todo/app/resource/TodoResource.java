@@ -27,7 +27,7 @@ import jp.co.frevoworks.javaee.todo.domain.service.TodoService;
  *
  * @author frevoworks
  */
-@Path("todo")
+@Path("/todo")
 @RequestScoped
 public class TodoResource {
 
@@ -63,13 +63,20 @@ public class TodoResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Todo post(Todo todo) {
+ //   public void post(Todo todo) {
+    try {
+        System.out.println("post test");
         Set<ConstraintViolation<Todo>> errors = validator.validate(todo);
         if (!errors.isEmpty()) {
             throw new WebApplicationException("入力エラーがあります", Status.BAD_REQUEST);
         }
         todoService.create(todo);
+        
+    }catch (WebApplicationException e){
+        System.out.println(e);
+    }
         return todo;
     }
 
