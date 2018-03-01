@@ -13,7 +13,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends ResourceConfig {
-
+    
     public ApplicationConfig() {
         packages(this.getClass().getPackage().getName());
     }
