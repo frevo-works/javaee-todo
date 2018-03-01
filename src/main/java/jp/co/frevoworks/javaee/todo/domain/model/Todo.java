@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(of = {"id"})
 @ToString
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Todo.findAll", query = "SELECT t FROM Todo t")
     , @NamedQuery(name = "Todo.findById", query = "SELECT t FROM Todo t WHERE t.id = :id")
