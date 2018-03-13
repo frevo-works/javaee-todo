@@ -57,26 +57,19 @@ public class TodoResource {
         if (entity == null) {
             throw new WebApplicationException("データがありません。", Status.NOT_FOUND);
         }
-
         return entity;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    //@Produces(MediaType.TEXT_PLAIN)
     public Todo post(Todo todo) {
- //   public void post(Todo todo) {
-    try {
-        System.out.println("post test");
         Set<ConstraintViolation<Todo>> errors = validator.validate(todo);
+        System.out.println(errors);
         if (!errors.isEmpty()) {
             throw new WebApplicationException("入力エラーがあります", Status.BAD_REQUEST);
         }
-        todoService.create(todo);
-        
-    }catch (WebApplicationException e){
-        System.out.println(e);
-    }
+        todoService.create(todo);        
         return todo;
     }
 
@@ -101,7 +94,7 @@ public class TodoResource {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public void delete(@PathParam("id") Integer id) {
         this.todoService.delete(id);
